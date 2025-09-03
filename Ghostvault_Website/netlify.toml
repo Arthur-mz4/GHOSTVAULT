@@ -1,18 +1,18 @@
 [build]
-  publish = "Ghostvault_Website"
+  publish = "."
 
 [[redirects]]
   from = "/members/*"
   to = "/login.html"
   status = 401
   force = true
-  conditions = { Role = ["member"] }
+  conditions = { Role = ["*"] }
 
 [[redirects]]
   from = "/downloads/*"
   to = "/login.html"
   status = 401
   force = true
-  conditions = { Role = ["member"] }
+  conditions = { Role = ["*"] }
 
 
