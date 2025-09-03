@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GhostGuard Mobile – Preview Guide</title>
+    <meta name="description" content="How to preview the GhostGuard Mobile app with Expo. Features: Safe Browser, link scanning, storage scanning, history, settings, optional VirusTotal." />
+    <link rel="icon" href="../GhostVault_Extension/icons/icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-wrap">
+        <a class="brand" href="index.html">
+          <img class="logo" src="../GhostVault_Extension/icons/icon.png" alt="GhostVault logo" />
+          <span class="brand-name">GhostVault</span>
+        </a>
+        <nav class="nav">
+          <a href="index.html#mobile">Overview</a>
+          <a href="#preview">Preview</a>
+          <a href="#features">Features</a>
+          <a href="#notes">Notes</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container">
+          <h1 class="section-title">GhostGuard Mobile (Preview)</h1>
+          <p class="lead">A privacy toolkit for your phone: a Safe Browser with link‑scan prompts, link and storage scanning with optional VirusTotal, plus history and settings. The app is in active development.</p>
+          <div class="cta-row">
+            <a class="btn btn-secondary" href="#preview">Run with Expo</a>
+            <a class="btn" href="index.html#mobile">Back to overview</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="preview" class="section alt">
+        <div class="container cols">
+          <div>
+            <h2 class="section-title">Quick start (no computer needed)</h2>
+            <ol class="steps">
+              <li>Install Expo Go on your phone from the App Store or Google Play.</li>
+              <li>Open Expo Go and scan the QR code on this page.</li>
+              <li>Follow prompts to open the GhostGuard Mobile preview.</li>
+            </ol>
+            <p class="hint">When the app is published, this QR will open the live build directly.</p>
+          </div>
+          <div class="panel center">
+            <h3>Scan with Expo Go</h3>
+            <img src="assets/qr-placeholder.svg" alt="Expo QR placeholder" style="width:240px;height:240px;margin-top:8px;border-radius:8px;border:1px solid var(--border);" />
+            <p class="hint">Placeholder QR for now. Replaced with live link at release.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="section">
+        <div class="container features-grid">
+          <article class="card"><h3>Safe Browser</h3><p>Prompts to scan links before opening, with basic tracker blocking.</p></article>
+          <article class="card"><h3>Link Scanner</h3><p>Heuristics for suspicious patterns plus optional VirusTotal URL checks.</p></article>
+          <article class="card"><h3>Storage Scanner</h3><p>Pick files to hash and check with VirusTotal (hash lookup).</p></article>
+          <article class="card"><h3>History & Settings</h3><p>Local history and preferences saved on device.</p></article>
+        </div>
+      </section>
+
+      <section id="notes" class="section alt">
+        <div class="container cols">
+          <div>
+            <h2 class="section-title">Notes & limitations</h2>
+            <ul class="checklist">
+              <li>Mobile OSes restrict device‑wide scanning; storage scans work on picked files.</li>
+              <li>Tracker blocking is basic due to WebView limitations.</li>
+              <li>Preview quality: expect frequent improvements.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Current focus</h3>
+            <ul class="checklist">
+              <li>Improving accuracy for file hashing and VT flows.</li>
+              <li>Better history coverage for link scans.</li>
+              <li>UX refinements and stability.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" class="section">
+        <div class="container faq">
+          <details>
+            <summary>Is the app free?</summary>
+            <p>Yes. It runs locally on your device. Optional APIs like VirusTotal may have their own plans/limits.</p>
+          </details>
+          <details>
+            <summary>Where is data stored?</summary>
+            <p>Settings and history are stored locally on the device (AsyncStorage). No analytics.</p>
+          </details>
+          <details>
+            <summary>How stable is the preview?</summary>
+            <p>Core flows work, but it’s evolving. Expect rapid updates.</p>
+          </details>
+        </div>
+      </section>
+
+      <section class="section cta-final">
+        <div class="container center">
+          <h2>Try the preview</h2>
+          <div class="cta-row">
+            <a class="btn btn-secondary" href="#preview">Run with Expo</a>
+            <a class="btn" href="index.html">Back to Home</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <div class="foot-left">
+          <a class="brand" href="index.html">
+            <img class="logo" src="../GhostVault_Extension/icons/icon.png" alt="GhostVault logo" />
+            <span class="brand-name">GhostVault</span>
+          </a>
+          <p class="tiny">© <span id="year"></span> GhostVault.</p>
+        </div>
+        <div class="foot-nav">
+          <a href="#preview">Preview</a>
+          <a href="#features">Features</a>
+          <a href="#faq">FAQ</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  </body>
+  </html>
+
+

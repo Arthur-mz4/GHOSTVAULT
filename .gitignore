@@ -1,0 +1,24 @@
+# Node
+node_modules/
+npm-debug.log*
+pnpm-lock.yaml
+yarn.lock
+
+# Expo/React Native
+.expo/
+.expo-shared/
+*.apk
+*.aab
+*.ipa
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Builds/Artifacts
+GhostVault_Extension/background.bundle.js
+GhostVault_Extension/_metadata/
+GhostVault_Extension/node_modules/
+GhostGuard_Mobile/node_modules/
+
+

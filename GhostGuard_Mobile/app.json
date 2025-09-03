@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "GhostGuard Mobile",
+    "slug": "ghostguard-mobile",
+    "version": "1.0.0",
+    "scheme": "ghostguard",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "platforms": ["ios", "android"],
+    "ios": { "supportsTablet": true },
+    "android": { "package": "com.ghostguard.mobile" }
+  }
+}
+
+

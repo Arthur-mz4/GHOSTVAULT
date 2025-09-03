@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome to GhostVault</title>
+  <style>
+    :root {
+      /* GhostVault Design System - Dark Theme with Glassmorphism */
+      --bg: #0f1724; /* deep navy */
+      --panel: #111827; /* almost black */
+      --muted: #9aa4b2;
+      --surface: #0b1220;
+      --accent: #22c1c3; /* ghost teal */
+      --accent-2: #7dd3fc; /* light cyan for highlights */
+      --success: #28c76f;
+      --danger: #ff6b6b;
+      --glass: rgba(255, 255, 255, 0.03);
+      --radius: 12px;
+      --gap: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(180deg, var(--bg), #071123);
+      color: #e6eef3;
+    }
+    
+    .container {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(2, 6, 23, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 40px 32px;
+      max-width: 480px;
+      width: 90%;
+      margin: 24px auto;
+      text-align: center;
+    }
+    
+    /* Header with logo */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+    
+    .logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #031018;
+      font-size: 24px;
+    }
+    
+    h1 {
+      color: #e6eef3;
+      font-size: 2rem;
+      margin: 0;
+      font-weight: 700;
+    }
+    
+    .subtitle {
+      color: var(--accent-2);
+      font-size: 16px;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+    
+    .features {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.015));
+      border-radius: var(--radius);
+      padding: 20px;
+      margin: 24px 0;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      text-align: left;
+    }
+    
+    .features ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .features li {
+      margin-bottom: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    
+    .features li:last-child {
+      border-bottom: none;
+    }
+    
+    .features strong {
+      color: var(--accent-2);
+      font-weight: 600;
+    }
+    
+    ul {
+      text-align: left;
+      margin: 18px 0 24px 0;
+      padding-left: 20px;
+    }
+    
+    li {
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+    
+    .get-started {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #031018;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: all 0.2s ease;
+    }
+    
+    .get-started:focus, .get-started:hover {
+      background: linear-gradient(135deg, var(--accent-2), var(--accent));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(34, 193, 195, 0.3);
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    
+    .tip {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.015));
+      color: var(--accent-2);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      box-shadow: 0 4px 12px rgba(34, 193, 195, 0.04);
+    }
+    
+    .aria-desc {
+      position: absolute;
+      left: -9999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-labelledby="welcome-title">
+    <div class="header">
+      <div class="logo">GV</div>
+      <h1 id="welcome-title">Welcome to GhostVault!</h1>
+    </div>
+    
+    <div class="subtitle">Your secure, privacy-first password manager for the browser.</div>
+    
+    <div class="features">
+      <ul>
+        <li><strong>Pin GhostVault:</strong> Click the puzzle icon <span aria-label="Extensions">🧩</span> in your browser bar, then pin <strong>GhostVault</strong> for easy access.</li>
+        <li><strong>Set your master password:</strong> The first time you save a login, you'll be prompted to set a master password. <span aria-label="Help" title="This password protects all your saved logins. Don't forget it!">❓</span></li>
+        <li><strong>Save logins easily:</strong> Just log in to any website. GhostVault will offer to save your credentials securely.</li>
+        <li><strong>Autofill logins:</strong> When you revisit a site, GhostVault can autofill your credentials for you.</li>
+        <li><strong>Manage settings:</strong> Click the <span aria-label="Settings">⚙️</span> icon in the popup to customize your experience.</li>
+      </ul>
+    </div>
+    
+    <button class="get-started" id="getStartedBtn" aria-label="Get started with GhostVault">Get Started</button>
+    
+    <div class="aria-desc" id="aria-desc">After clicking Get Started, you can open GhostVault from the browser toolbar.</div>
+    <script src="welcome.js"></script>
+  </div>
+</body>
+</html> 

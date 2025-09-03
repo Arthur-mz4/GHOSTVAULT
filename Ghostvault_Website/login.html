@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GhostVault – Sign in</title>
+    <link rel="icon" href="../GhostVault_Extension/icons/icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-wrap">
+        <a class="brand" href="index.html">
+          <img class="logo" src="../GhostVault_Extension/icons/icon.png" alt="GhostVault logo" />
+          <span class="brand-name">GhostVault</span>
+        </a>
+        <nav class="nav">
+          <a href="index.html#features">Features</a>
+          <a href="index.html#extension">Extension</a>
+          <a href="index.html#mobile">Mobile</a>
+          <a href="index.html#trust">Trust</a>
+          <a href="index.html#faq">FAQ</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container center">
+          <h1 class="section-title">Create an account or sign in</h1>
+          <p class="lead">Accounts unlock the Members area and downloads.</p>
+          <div class="panel" style="display:inline-block; margin-top:12px;">
+            <button class="btn btn-primary" id="btn-login">Open sign‑in</button>
+            <p class="hint" style="margin-top:10px;">You can use email/password or supported social logins (if enabled).</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <div class="foot-left">
+          <a class="brand" href="index.html">
+            <img class="logo" src="../GhostVault_Extension/icons/icon.png" alt="GhostVault logo" />
+            <span class="brand-name">GhostVault</span>
+          </a>
+          <p class="tiny">© <span id="year"></span> GhostVault.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+      (function(){
+        if (!window.netlifyIdentity) return;
+        netlifyIdentity.on('login', () => { window.location.href = '/members/'; });
+        netlifyIdentity.on('init', user => { if (user) window.location.href = '/members/'; });
+        netlifyIdentity.init();
+        document.getElementById('btn-login').addEventListener('click', function(){ netlifyIdentity.open(); });
+      })();
+    </script>
+  </body>
+  </html>
+
+

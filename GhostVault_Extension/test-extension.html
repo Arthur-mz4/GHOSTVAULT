@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostVault Extension Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>GhostVault Extension Test Page</h1>
+    
+    <div class="test-section">
+        <h2>Login Form Test</h2>
+        <p>This form should trigger the extension's login detection:</p>
+        <form id="loginForm">
+            <input type="email" placeholder="Email" id="email" required><br><br>
+            <input type="password" placeholder="Password" id="password" required><br><br>
+            <button type="submit" class="test-button">Login</button>
+        </form>
+        <div id="loginResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Terms & Conditions Test</h2>
+        <p>This button should trigger the T&C analyzer:</p>
+        <button id="tcButton" class="test-button">Accept Terms & Conditions</button>
+        <div id="tcResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Cookie Consent Test</h2>
+        <p>This simulates a cookie consent dialog:</p>
+        <div style="background: #e9ecef; padding: 15px; border-radius: 4px; margin: 10px 0;">
+            <p>This website uses cookies to improve your experience. By continuing to use this site, you agree to our use of cookies.</p>
+            <button id="cookieAccept" class="test-button">Accept All Cookies</button>
+            <button id="cookieReject" class="test-button" style="background: #6c757d;">Reject</button>
+        </div>
+        <div id="cookieResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Extension Status</h2>
+        <p>Check if the GhostVault extension is loaded:</p>
+        <button id="checkExtension" class="test-button">Check Extension</button>
+        <div id="extensionResult" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Test login form
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            document.getElementById('loginResult').style.display = 'block';
+            document.getElementById('loginResult').innerHTML = `
+                <strong>Login attempt detected:</strong><br>
+                Email: ${email}<br>
+                Password: ${password}<br>
+                <em>The extension should prompt to save this login.</em>
+            `;
+        });
+
+        // Test T&C button
+        document.getElementById('tcButton').addEventListener('click', function() {
+            document.getElementById('tcResult').style.display = 'block';
+            document.getElementById('tcResult').innerHTML = `
+                <strong>T&C button clicked:</strong><br>
+                <em>The extension should analyze this page for privacy risks.</em>
+            `;
+        });
+
+        // Test cookie consent
+        document.getElementById('cookieAccept').addEventListener('click', function() {
+            document.getElementById('cookieResult').style.display = 'block';
+            document.getElementById('cookieResult').innerHTML = `
+                <strong>Cookie consent accepted:</strong><br>
+                <em>The extension should have analyzed the consent dialog.</em>
+            `;
+        });
+
+        document.getElementById('cookieReject').addEventListener('click', function() {
+            document.getElementById('cookieResult').style.display = 'block';
+            document.getElementById('cookieResult').innerHTML = `
+                <strong>Cookie consent rejected:</strong><br>
+                <em>The extension should have analyzed the consent dialog.</em>
+            `;
+        });
+
+        // Check extension status
+        document.getElementById('checkExtension').addEventListener('click', function() {
+            const result = document.getElementById('extensionResult');
+            result.style.display = 'block';
+            
+            // Try to detect the extension
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+                result.innerHTML = `
+                    <strong>Extension detected:</strong><br>
+                    Extension ID: ${chrome.runtime.id}<br>
+                    <em>The GhostVault extension appears to be loaded.</em>
+                `;
+            } else {
+                result.innerHTML = `
+                    <strong>Extension not detected:</strong><br>
+                    <em>Make sure the GhostVault extension is installed and enabled.</em>
+                `;
+            }
+        });
+
+        // Simulate some tracking cookies for testing
+        document.cookie = "_ga=GA1.1.123456789.1234567890; path=/";
+        document.cookie = "_fbp=fb.1.1234567890123.1234567890; path=/";
+        document.cookie = "session_id=abc123def456; path=/";
+    </script>
+</body>
+</html>

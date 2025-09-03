@@ -1,0 +1,345 @@
+importScripts('../db.js');
+
+// Web Crypto API AES-GCM encryption/decryption helpers
+const enc = new TextEncoder();
+new TextDecoder();
+
+async function getKeyMaterial(password) {
+  return await crypto.subtle.importKey(
+    "raw",
+    enc.encode(password),
+    { name: "PBKDF2" },
+    false,
+    ["deriveKey"]
+  );
+}
+
+async function deriveKey(password, salt) {
+  const keyMaterial = await getKeyMaterial(password);
+  return await crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt,
+      iterations: 100000,
+      hash: "SHA-256"
+    },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"]
+  );
+}
+
+async function encrypt(text, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await deriveKey(password, salt);
+  const ciphertext = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    key,
+    enc.encode(text)
+  );
+  return {
+    salt: Array.from(salt),
+    iv: Array.from(iv),
+    data: Array.from(new Uint8Array(ciphertext))
+  };
+}
+
+// Helper to get/set master password (in-memory for session)
+let masterPassword = null;
+function getMasterPassword() {
+  return new Promise((resolve) => {
+    if (masterPassword) return resolve(masterPassword);
+    // Request master password from popup (may fail if popup is not open)
+    chrome.runtime.sendMessage({ action: 'requestMasterPassword' }, (response) => {
+      if (chrome.runtime.lastError) {
+        // No receiver (popup not open) — resolve null silently
+        return resolve(null);
+      }
+      if (response && response.masterPassword) {
+        masterPassword = response.masterPassword;
+        resolve(masterPassword);
+      } else {
+        resolve(null);
+      }
+    });
+  });
+}
+
+// --- Listen for login detection from content script ---
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  if (message.action === 'loginDetected') {
+    // Save credentials (try to get master password via popup if open)
+    chrome.runtime.sendMessage({ action: 'requestMasterPassword' }, async response => {
+      if (chrome.runtime.lastError) {
+        // Popup not open — cannot request MP. Abort gracefully.
+        sendResponse({ status: 'no_master_password' });
+        return;
+      }
+      const mp = response && response.masterPassword;
+      if (!mp) return sendResponse({ status: 'no_master_password' });
+      
+      const login = {
+        url: message.url,
+        user: message.username,
+        pass: await encrypt(message.password, mp),
+        savedAt: Date.now()
+      };
+      await self.GhostVaultDB.saveLogin(login);
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icons/icon.png',
+        title: 'GhostVault',
+        message: `Login for ${message.username} on ${message.url} saved securely.`
+      });
+      sendResponse({ status: 'saved' });
+    });
+    return true;
+  }
+  
+  if (message.action === 'scanTandC' && message.tcText) {
+    // Analyze T&C text for risks
+    const redFlags = [
+      { phrase: 'we may share your data', issue: 'Data sharing without specific consent' },
+      { phrase: 'third parties', issue: 'Involves external services or trackers' },
+      { phrase: 'track your activity', issue: 'Activity tracking' },
+      { phrase: 'sell your data', issue: 'Your data may be sold' },
+      { phrase: 'change terms at any time', issue: 'Unilateral changes allowed' },
+      { phrase: 'without notifying you', issue: 'No obligation to notify of changes' },
+      { phrase: 'retain your data', issue: 'Data stored for unclear duration' },
+      { phrase: 'collect information about', issue: 'Unclear data collection scope' },
+      { phrase: 'consent to all future updates', issue: 'Blanket consent required' },
+      { phrase: 'disclose information to comply', issue: 'Broad disclosure to authorities' }
+    ];
+    const text = message.tcText.toLowerCase();
+    const foundIssues = redFlags.filter(item => text.includes(item.phrase));
+    let result = '';
+    if (foundIssues.length === 0) {
+      result = '✅ No major red flags found in the T&Cs.';
+    } else {
+      result = '⚠️ Potential concerns found:\n' + foundIssues.map(i => `- ${i.issue}`).join('\n');
+    }
+    // Send result back to content script for user prompt
+    if (sender.tab && sender.tab.id) {
+      chrome.tabs.sendMessage(sender.tab.id, { action: 'showTandCScanResult', result }, () => {});
+    }
+    sendResponse({ status: 'scanned' });
+    return true;
+  }
+  
+  if (message.action === 'ghostvaultTCScanDetected') {
+    // Store the scan data and show badge
+    chrome.storage.local.set({
+      tcScanData: {
+        tcText: message.tcText,
+        cookies: message.cookies,
+        btnSelector: message.btnSelector,
+        tabId: sender.tab?.id,
+        timestamp: Date.now()
+      }
+    });
+    
+    // Show badge to indicate T&C detected
+    if (sender.tab?.id) {
+      chrome.action.setBadgeText({
+        text: 'T&C',
+        tabId: sender.tab.id
+      });
+      chrome.action.setBadgeBackgroundColor({
+        color: '#ff6b35',
+        tabId: sender.tab.id
+      });
+    }
+    
+    sendResponse({ status: 'detected' });
+    return true;
+  }
+  
+  if (message.action === 'scanTandCAndCookies') {
+    // --- Enhanced T&C scan ---
+    const redFlags = [
+      // Data sharing and third parties
+      { phrase: 'we may share your data', issue: 'Data sharing without specific consent', severity: 'high' },
+      { phrase: 'third parties', issue: 'Involves external services or trackers', severity: 'medium' },
+      { phrase: 'share with partners', issue: 'Data sharing with business partners', severity: 'medium' },
+      { phrase: 'affiliates', issue: 'Data sharing with affiliated companies', severity: 'medium' },
+      
+      // Tracking and monitoring
+      { phrase: 'track your activity', issue: 'Activity tracking', severity: 'high' },
+      { phrase: 'monitor your usage', issue: 'Usage monitoring', severity: 'medium' },
+      { phrase: 'behavioral advertising', issue: 'Behavioral advertising', severity: 'high' },
+      { phrase: 'personalized ads', issue: 'Personalized advertising', severity: 'medium' },
+      
+      // Data selling
+      { phrase: 'sell your data', issue: 'Your data may be sold', severity: 'high' },
+      { phrase: 'monetize your data', issue: 'Data monetization', severity: 'high' },
+      { phrase: 'commercial use', issue: 'Commercial use of your data', severity: 'medium' },
+      
+      // Terms changes
+      { phrase: 'change terms at any time', issue: 'Unilateral changes allowed', severity: 'medium' },
+      { phrase: 'without notifying you', issue: 'No obligation to notify of changes', severity: 'high' },
+      { phrase: 'modify this agreement', issue: 'Agreement can be modified', severity: 'medium' },
+      
+      // Data retention
+      { phrase: 'retain your data', issue: 'Data stored for unclear duration', severity: 'medium' },
+      { phrase: 'indefinitely', issue: 'Data stored indefinitely', severity: 'high' },
+      { phrase: 'permanent storage', issue: 'Permanent data storage', severity: 'high' },
+      
+      // Data collection
+      { phrase: 'collect information about', issue: 'Unclear data collection scope', severity: 'medium' },
+      { phrase: 'any information', issue: 'Broad data collection', severity: 'medium' },
+      { phrase: 'all data', issue: 'Comprehensive data collection', severity: 'medium' },
+      
+      // Consent issues
+      { phrase: 'consent to all future updates', issue: 'Blanket consent required', severity: 'high' },
+      { phrase: 'automatic consent', issue: 'Automatic consent to changes', severity: 'high' },
+      
+      // Legal disclosure
+      { phrase: 'disclose information to comply', issue: 'Broad disclosure to authorities', severity: 'medium' },
+      { phrase: 'law enforcement', issue: 'Data sharing with law enforcement', severity: 'medium' },
+      { phrase: 'government requests', issue: 'Government data requests', severity: 'medium' },
+      
+      // Additional privacy concerns
+      { phrase: 'cross-device tracking', issue: 'Cross-device tracking', severity: 'high' },
+      { phrase: 'location data', issue: 'Location tracking', severity: 'medium' },
+      { phrase: 'biometric data', issue: 'Biometric data collection', severity: 'high' },
+      { phrase: 'social media integration', issue: 'Social media data access', severity: 'medium' }
+    ];
+    const text = (message.tcText || '').toLowerCase();
+    const foundIssues = redFlags.filter(item => text.includes(item.phrase));
+    let tcResult = '';
+    
+    if (foundIssues.length === 0) {
+      tcResult = '✅ No major red flags found in the T&Cs.';
+    } else {
+      // Group by severity
+      const highIssues = foundIssues.filter(i => i.severity === 'high');
+      const mediumIssues = foundIssues.filter(i => i.severity === 'medium');
+      
+      tcResult = `⚠️ Found ${foundIssues.length} potential concern(s) in T&Cs:\n\n`;
+      
+      if (highIssues.length > 0) {
+        tcResult += `🔴 High Risk Issues:\n${highIssues.map(i => `• ${i.issue}`).join('\n')}\n\n`;
+      }
+      
+      if (mediumIssues.length > 0) {
+        tcResult += `🟡 Medium Risk Issues:\n${mediumIssues.map(i => `• ${i.issue}`).join('\n')}\n\n`;
+      }
+      
+      tcResult += '💡 Consider reviewing these terms carefully before proceeding.';
+    }
+    
+    // --- Cookie scan ---
+    let cookieResult = '';
+    const cookies = (message.cookies || '').split(';').map(c => c.trim()).filter(Boolean);
+    const cookieRisks = [];
+    cookies.forEach(cookie => {
+      const [name, value] = cookie.split('=');
+      if (!name) return;
+      // Simple rules: tracking, session, third-party, long-lived, etc.
+      if (/track|ad|sess|token|id|_ga|_gid|_fbp|_gcl|_utm/i.test(name)) {
+        cookieRisks.push(`Cookie "${name}" may be used for tracking or analytics.`);
+      }
+      if (/auth|login|session|token/i.test(name)) {
+        cookieRisks.push(`Cookie "${name}" may contain sensitive authentication info.`);
+      }
+    });
+    if (cookieRisks.length === 0) {
+      cookieResult = '✅ No major cookie risks detected.';
+    } else {
+      cookieResult = '⚠️ Potential cookie risks:\n' + cookieRisks.join('\n');
+    }
+    
+    // --- Combine and send result ---
+    const result = tcResult + '\n\n' + cookieResult;
+    if (sender.tab && sender.tab.id) {
+      chrome.tabs.sendMessage(sender.tab.id, { action: 'showTandCScanResult', result }, () => {});
+    }
+    sendResponse({ status: 'scanned' });
+    return true;
+  }
+  
+  if (message.action === 'addNeverSaveSite' && message.site) {
+    await self.GhostVaultDB.addNeverSaveSite(message.site);
+    sendResponse({ status: 'added' });
+    return true;
+  }
+  
+  // Always respond to avoid connection errors
+  sendResponse({ status: 'ignored' });
+  return true;
+});
+
+// Handle Save/Dismiss buttons
+chrome.notifications.onButtonClicked.addListener((notifId, btnIdx) => {
+  if (notifId === 'saveLoginPrompt') {
+    if (btnIdx === 0) {
+      // User clicked Save
+      chrome.storage.session.get('pendingLogin', async ({ pendingLogin }) => {
+        if (!pendingLogin) return;
+        const mp = await getMasterPassword();
+        if (!mp) return;
+        encrypt(pendingLogin.password, mp).then(encryptedPass => {
+          chrome.storage.sync.get({ logins: [] }, ({ logins }) => {
+            const newLogin = {
+              url: pendingLogin.url,
+              user: pendingLogin.username,
+              pass: encryptedPass
+            };
+            const exists = logins.find(l => l.url === newLogin.url && l.user === newLogin.user);
+            if (!exists) {
+              logins.push(newLogin);
+              chrome.storage.sync.set({ logins }, () => {
+                chrome.notifications.create('', {
+                  type: 'basic',
+                  iconUrl: 'icons/icon.png',
+                  title: 'GhostVault',
+                  message: `Login saved for ${newLogin.user} on ${newLogin.url}.`
+                });
+              });
+            }
+            chrome.storage.session.remove('pendingLogin');
+          });
+        });
+      });
+    } else {
+      // User clicked Dismiss
+      chrome.storage.session.remove('pendingLogin');
+    }
+    chrome.notifications.clear(notifId);
+  }
+});
+
+// Show onboarding page on first install
+chrome.runtime.onInstalled.addListener(({ reason }) => {
+  if (reason === 'install') {
+    chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html') });
+  }
+});
+
+// Tracker blocking ruleset setup (optional, auto-load based on setting)
+chrome.runtime.onStartup.addListener(() => {
+  chrome.storage.sync.get(["blockTrackers"], (data) => {
+    const enabled = data.blockTrackers ?? true;
+    chrome.declarativeNetRequest.updateEnabledRulesets({
+      enableRulesetIds: enabled ? ["ruleset_1"] : [],
+      disableRulesetIds: enabled ? [] : ["ruleset_1"]
+    });
+  });
+});
+
+// Master password request handler - delegates to popup for secure UI
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'requestMasterPassword') {
+    // Forward to popup for secure password input (may fail if popup not open)
+    chrome.runtime.sendMessage({ action: 'requestMasterPassword' }, (response) => {
+      if (chrome.runtime.lastError) {
+        sendResponse({ masterPassword: null });
+        return;
+      }
+      sendResponse(response);
+    });
+    return true; // Keep message channel open for async response
+  }
+});

@@ -1,0 +1,430 @@
+# GhostVault Browser Extension - Complete Project Analysis
+
+## Executive Summary
+
+GhostVault is a comprehensive privacy-first browser extension built for Chrome/Chromium-based browsers that provides secure password management, breach detection, privacy protection, and security analysis features. The project uses modern web technologies including Web Crypto API, IndexedDB, and Chrome Extension APIs to create a robust security toolkit.
+
+## Project Architecture Overview
+
+### Technology Stack
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Build System**: Rollup.js with CommonJS and Node.js resolution plugins
+- **Testing**: Jest testing framework
+- **Storage**: IndexedDB for local storage, Chrome Storage API for sync
+- **Encryption**: Web Crypto API (AES-GCM with PBKDF2)
+- **Browser APIs**: Chrome Extension Manifest V3 APIs
+
+### Core Components
+1. **Background Service Worker** - Core extension logic and encryption
+2. **Content Script** - Page interaction and form detection
+3. **Popup Interface** - User-facing UI and data management
+4. **Settings Page** - Configuration management
+5. **Database Layer** - IndexedDB wrapper for data persistence
+6. **Build System** - Rollup configuration for bundling
+
+---
+
+## Detailed File Analysis
+
+### 1. MANIFEST.JSON (Lines 1-57)
+**Purpose**: Chrome Extension Manifest V3 configuration file
+
+**Line-by-line breakdown**:
+- **Lines 1-3**: Manifest version 3 declaration, extension name "GhostVault", version 1.0
+- **Lines 4-5**: Description and icon configuration for different sizes (16, 48, 128px)
+- **Lines 6-12**: Action configuration defining popup.html as default interface and icon
+- **Lines 13-14**: Options page configuration pointing to settings.html
+- **Lines 15-18**: Background service worker configuration using background.js
+- **Lines 19-25**: Content scripts configuration - injects content.js into all URLs
+- **Lines 26-33**: Required permissions for storage, notifications, scripting, activeTab, and declarativeNetRequest
+- **Lines 34-36**: Host permissions allowing access to all URLs
+- **Lines 37-43**: Web accessible resources configuration for external crypto library
+- **Lines 44-52**: Declarative net request configuration for tracker blocking rules
+
+**Key Features**:
+- Uses Manifest V3 (latest Chrome extension standard)
+- Implements declarative net request for tracker blocking
+- Requires comprehensive permissions for full functionality
+- Supports content script injection across all websites
+
+### 2. PACKAGE.JSON (Lines 1-25)
+**Purpose**: Node.js project configuration and dependency management
+
+**Line-by-line breakdown**:
+- **Lines 1-3**: Project metadata (name, version, type as ES module)
+- **Lines 4-5**: Main entry point and script definitions
+- **Lines 6-11**: NPM scripts for testing, building, development, and test watching
+- **Lines 12-15**: Project metadata (keywords, author, license, description)
+- **Lines 16-20**: Development dependencies including Rollup plugins and Jest
+- **Lines 21-23**: Production dependencies (crypto-js for encryption)
+
+**Build Scripts**:
+- `npm test`: Runs Jest test suite
+- `npm run build`: Executes Rollup build process
+- `npm run dev`: Runs Rollup in watch mode for development
+- `npm run test:watch`: Runs Jest in watch mode
+
+### 3. ROLLUP.CONFIG.JS (Lines 1-11)
+**Purpose**: Rollup bundler configuration for building the extension
+
+**Line-by-line breakdown**:
+- **Lines 1-2**: Import statements for Rollup plugins (resolve and commonjs)
+- **Lines 3-11**: Export default configuration object
+  - **Line 4**: Input file specification (background.src.js)
+  - **Lines 5-8**: Output configuration (ES format, output to background.js)
+  - **Line 9**: Plugin array with resolve and commonjs plugins
+
+**Build Process**:
+- Takes background.src.js as source
+- Bundles with CommonJS and Node.js module resolution
+- Outputs ES module format to background.js
+- Enables modern JavaScript features and module bundling
+
+### 4. BACKGROUND.SRC.JS (Lines 1-266)
+**Purpose**: Source code for background service worker - core extension logic
+
+**Section 1: Crypto Setup (Lines 1-4)**
+- **Line 1**: Imports database module
+- **Lines 2-3**: Text encoder/decoder setup for Web Crypto API
+- **Line 4**: Empty line for readability
+
+**Section 2: Key Derivation Functions (Lines 5-25)**
+- **Lines 5-11**: `getKeyMaterial()` - Converts password to crypto key material
+- **Lines 12-25**: `deriveKey()` - PBKDF2 key derivation with 100,000 iterations
+
+**Section 3: Encryption Functions (Lines 26-50)**
+- **Lines 26-40**: `encrypt()` - AES-GCM encryption with random salt and IV
+- **Lines 41-50**: `decrypt()` - AES-GCM decryption with error handling
+
+**Section 4: Master Password Management (Lines 51-65)**
+- **Lines 51-52**: In-memory master password storage
+- **Lines 53-65**: `getMasterPassword()` - Requests password from popup if not cached
+
+**Section 5: Message Listeners (Lines 66-180)**
+- **Lines 66-85**: Login detection handler - saves encrypted credentials
+- **Lines 86-110**: T&C scanning handler - analyzes terms for privacy risks
+- **Lines 111-150**: Combined T&C and cookie scanning with risk assessment
+- **Lines 151-155**: Never-save site management
+- **Lines 156-158**: Default response handler
+
+**Section 6: Notification Handlers (Lines 159-190)**
+- **Lines 159-190**: Handles save/dismiss buttons for login prompts
+
+**Section 7: Extension Lifecycle (Lines 191-210)**
+- **Lines 191-195**: Shows onboarding page on first install
+- **Lines 196-210**: Tracker blocking ruleset management on startup
+
+**Section 8: Comments (Lines 211-266)**
+- **Lines 211-266**: Implementation notes and future considerations
+
+**Key Features**:
+- AES-GCM encryption with PBKDF2 key derivation
+- Real-time login detection and secure storage
+- Terms & Conditions analysis for privacy risks
+- Cookie scanning and risk assessment
+- Tracker blocking configuration
+- Notification system for user interactions
+
+### 5. CONTENT.JS (Lines 1-270)
+**Purpose**: Content script injected into web pages for form detection and interaction
+
+**Section 1: Crypto Functions (Lines 1-35)**
+- **Lines 1-2**: Text encoder/decoder setup
+- **Lines 3-12**: `getKeyMaterial()` - Web Crypto API key material generation
+- **Lines 13-25**: `deriveKey()` - PBKDF2 key derivation
+- **Lines 26-35**: `decodePassword()` - Password decryption with error handling
+
+**Section 2: Master Password Management (Lines 36-55)**
+- **Lines 36-37**: In-memory password cache
+- **Lines 38-55**: `getMasterPassword()` - Requests password from background script
+
+**Section 3: Auto-fill Functionality (Lines 56-95)**
+- **Lines 56-58**: Page load event listener
+- **Lines 59-62**: Current URL extraction
+- **Lines 63-95**: Saved login retrieval and form auto-filling logic
+
+**Section 4: Login Detection (Lines 96-120)**
+- **Lines 96-120**: Form submission detection and credential extraction
+
+**Section 5: Save Prompt UI (Lines 121-180)**
+- **Lines 121-180**: Modal dialog creation and event handling for save prompts
+
+**Section 6: T&C Detection (Lines 181-220)**
+- **Lines 181-220**: Terms & Conditions button detection and scanning
+
+**Section 7: Message Handling (Lines 221-270)**
+- **Lines 221-270**: Chrome runtime message listeners for scan results
+
+**Key Features**:
+- Automatic form detection and credential extraction
+- Real-time login detection with user prompts
+- Terms & Conditions button detection
+- Auto-fill functionality for saved credentials
+- Modal UI for user interactions
+
+### 6. DB.JS (Lines 1-88)
+**Purpose**: IndexedDB wrapper for local data storage
+
+**Section 1: Database Configuration (Lines 1-5)**
+- **Lines 1-3**: Database name and version constants
+- **Line 4**: Database connection promise cache
+- **Line 5**: Empty line
+
+**Section 2: Database Connection (Lines 6-25)**
+- **Lines 6-25**: `openDB()` - IndexedDB connection with schema creation
+
+**Section 3: Login Management (Lines 26-40)**
+- **Lines 26-32**: `saveLogin()` - Stores encrypted login credentials
+- **Lines 33-40**: `getLogins()` - Retrieves all saved logins
+
+**Section 4: T&C Scan Management (Lines 41-55)**
+- **Lines 41-47**: `saveTCScan()` - Stores T&C scan results
+- **Lines 48-55**: `getTCScans()` - Retrieves all T&C scans
+
+**Section 5: Never-Save Sites (Lines 56-70)**
+- **Lines 56-62**: `addNeverSaveSite()` - Adds site to never-save list
+- **Lines 63-70**: `getNeverSaveSites()` - Retrieves never-save sites
+
+**Section 6: Export (Lines 71-88)**
+- **Lines 71-88**: Exports functions to global scope for background and content scripts
+
+**Database Schema**:
+- `logins` table: Encrypted login credentials
+- `tcScans` table: Terms & Conditions scan results
+- `neverSaveSites` table: Sites where login saving is disabled
+
+### 7. POPUP.JS (Lines 1-340)
+**Purpose**: Main popup interface functionality and user interactions
+
+**Section 1: Initialization (Lines 1-10)**
+- **Lines 1-10**: DOM content loaded event listener and error handling setup
+
+**Section 2: Tips Loading (Lines 11-25)**
+- **Lines 11-25**: Dynamic tips loading from tips.json with error handling
+
+**Section 3: Phishing Detection (Lines 26-45)**
+- **Lines 26-45**: PhishTank API integration for malicious site detection
+
+**Section 4: Breach Checking (Lines 46-70)**
+- **Lines 46-70**: HaveIBeenPwned API integration for email breach detection
+
+**Section 5: T&C Analyzer (Lines 71-110)**
+- **Lines 71-110**: Terms & Conditions analysis with privacy risk detection
+
+**Section 6: Login Manager (Lines 111-140)**
+- **Lines 111-140**: Login management UI and functionality
+
+**Section 7: Crypto Functions (Lines 141-180)**
+- **Lines 141-180**: Web Crypto API functions for password encryption/decryption
+
+**Section 8: Login Operations (Lines 181-220)**
+- **Lines 181-220**: Login saving, loading, and management operations
+
+**Section 9: Settings and Master Password (Lines 221-250)**
+- **Lines 221-250**: Settings management and master password handling
+
+**Section 10: Data Management (Lines 251-340)**
+- **Lines 251-340**: Tab-based data management interface for logins, scans, and exports
+
+**Key Features**:
+- Dynamic tips system
+- Phishing site detection
+- Email breach checking
+- T&C analysis
+- Login management with encryption
+- Data export functionality
+- Tab-based interface
+
+### 8. POPUP.HTML (Lines 1-260)
+**Purpose**: Main popup interface HTML structure and styling
+
+**Section 1: Head and CSS Variables (Lines 1-15)**
+- **Lines 1-15**: CSS custom properties for consistent theming
+
+**Section 2: Base Styles (Lines 16-50)**
+- **Lines 16-50**: Body, header, and basic element styling
+
+**Section 3: Component Styles (Lines 51-150)**
+- **Lines 51-150**: Detailed styling for sections, buttons, tables, and interactive elements
+
+**Section 4: Responsive Design (Lines 151-200)**
+- **Lines 151-200**: Media queries for tablet and mobile responsiveness
+
+**Section 5: HTML Structure (Lines 201-260)**
+- **Lines 201-260**: Complete HTML structure with accessibility features
+
+**Design Features**:
+- Modern, accessible UI design
+- Responsive layout for different screen sizes
+- Consistent color scheme and typography
+- Tab-based interface for data management
+- Accessibility features (ARIA labels, live regions)
+
+### 9. RULES.JSON (Lines 1-168)
+**Purpose**: Declarative net request rules for tracker blocking
+
+**Structure**: Array of 15 blocking rules targeting common tracking services
+
+**Key Blocked Services**:
+- Google Analytics and Tag Manager
+- Facebook tracking pixels
+- DoubleClick advertising
+- Hotjar analytics
+- Mixpanel analytics
+- Amplitude analytics
+- Segment analytics
+- Optimizely A/B testing
+- Crazy Egg heatmaps
+- FullStory session recording
+- Mouseflow analytics
+- Microsoft Clarity
+
+**Rule Format**:
+- Each rule has unique ID, priority, action (block), and conditions
+- Conditions specify URL filters and resource types (script, image, xmlhttprequest)
+- Rules block specific tracking domains and services
+
+### 10. TIPS.JSON (Lines 1-8)
+**Purpose**: Security tips database for user education
+
+**Content**: 5 security tips covering:
+- Strong password usage
+- Suspicious link avoidance
+- Software updates
+- Privacy-focused tools
+- Public Wi-Fi security
+
+### 11. SETTINGS.HTML (Lines 1-137)
+**Purpose**: Extension settings page with configuration options
+
+**Features**:
+- Tracker blocking toggle
+- Tips display toggle
+- Auto-fill toggle
+- Breach notification toggle
+- Dark mode toggle
+- Credential sync toggle
+- Responsive design with background image
+
+### 12. SETTINGS.JS (Lines 1-62)
+**Purpose**: Settings page functionality and Chrome storage integration
+
+**Features**:
+- Settings loading from Chrome storage
+- Real-time settings updates
+- Default value management
+- Status message display
+- Error handling
+
+### 13. WELCOME.HTML (Lines 1-97)
+**Purpose**: Onboarding page for new users
+
+**Features**:
+- Welcome message and feature overview
+- Setup instructions
+- Accessibility features
+- Responsive design
+
+### 14. WELCOME.JS (Lines 1-8)
+**Purpose**: Simple onboarding page functionality
+
+**Features**:
+- Get started button handler
+- Window closing functionality
+
+---
+
+## Build System Analysis
+
+### Rollup Configuration
+The project uses Rollup.js for bundling with the following configuration:
+
+1. **Input**: `background.src.js` - Source file for background script
+2. **Output**: `background.js` - Compiled background script
+3. **Format**: ES modules for modern browser compatibility
+4. **Plugins**:
+   - `@rollup/plugin-node-resolve`: Resolves Node.js modules
+   - `@rollup/plugin-commonjs`: Converts CommonJS to ES modules
+
+### Build Process
+1. **Development**: `npm run dev` - Watch mode for real-time compilation
+2. **Production**: `npm run build` - Single compilation for deployment
+3. **Testing**: `npm test` - Jest test suite execution
+
+### Dependencies
+- **Development**: Rollup plugins, Jest testing framework
+- **Production**: crypto-js for encryption (though Web Crypto API is preferred)
+
+---
+
+## Security Architecture
+
+### Encryption Implementation
+1. **Algorithm**: AES-GCM with 256-bit keys
+2. **Key Derivation**: PBKDF2 with 100,000 iterations
+3. **Salt/IV**: Random generation for each encryption
+4. **Storage**: Encrypted data only, master password never stored
+
+### Privacy Protection
+1. **Tracker Blocking**: Declarative net request rules
+2. **Data Minimization**: Only necessary data collected
+3. **Local Storage**: IndexedDB for sensitive data
+4. **No External Tracking**: Minimal external API usage
+
+### Data Flow
+1. **User Input** → **Encryption** → **IndexedDB Storage**
+2. **Page Detection** → **Background Processing** → **User Notification**
+3. **Settings Changes** → **Chrome Storage** → **Extension Configuration**
+
+---
+
+## Development Workflow
+
+### File Organization
+```
+GhostVault_Extension/
+├── Source Files (background.src.js, content.js, etc.)
+├── Compiled Files (background.js)
+├── UI Files (popup.html, settings.html, welcome.html)
+├── Configuration (manifest.json, package.json, rollup.config.js)
+├── Data Files (rules.json, tips.json)
+├── Assets (icons/, _metadata/)
+└── Documentation (README.md)
+```
+
+### Development Process
+1. **Edit source files** (background.src.js, content.js, etc.)
+2. **Run build process** (`npm run build`)
+3. **Test in browser** (load unpacked extension)
+4. **Iterate and refine**
+
+### Testing Strategy
+- **Unit Tests**: Jest framework for JavaScript functions
+- **Integration Tests**: Manual testing of extension features
+- **Security Tests**: Encryption and data protection validation
+
+---
+
+## Deployment and Distribution
+
+### Development Installation
+1. Clone repository
+2. Install dependencies (`npm install`)
+3. Build extension (`npm run build`)
+4. Load unpacked extension in Chrome
+
+### Production Distribution
+1. Build optimized version
+2. Package extension files
+3. Submit to Chrome Web Store
+4. Distribute through official channels
+
+---
+
+## Conclusion
+
+GhostVault represents a comprehensive approach to browser security and privacy, combining modern web technologies with robust encryption and user-friendly interfaces. The project demonstrates best practices in Chrome extension development, security implementation, and user experience design.
+
+The modular architecture allows for easy maintenance and feature expansion, while the security-first approach ensures user data protection. The build system provides efficient development workflows, and the comprehensive documentation supports both development and user adoption.
+
+This extension serves as an excellent example of how to create privacy-focused browser tools that balance security, usability, and performance.

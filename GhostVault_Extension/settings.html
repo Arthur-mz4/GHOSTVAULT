@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostVault Settings</title>
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <img src="icons/icon.png" alt="GhostVault" class="logo-icon">
+                <h1>GhostVault Settings</h1>
+            </div>
+        </header>
+
+        <main class="settings-content">
+            <section class="settings-section">
+                <h2>Privacy Protection</h2>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label for="blockTrackers">Block Trackers</label>
+                        <p>Block common tracking scripts and analytics services</p>
+                    </div>
+                    <div class="switch-container">
+                        <input type="checkbox" id="blockTrackers" class="switch-input">
+                        <div class="switch"></div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label for="showTips">Show Security Tips</label>
+                        <p>Display helpful security tips in the popup</p>
+                    </div>
+                    <div class="switch-container">
+                        <input type="checkbox" id="showTips" class="switch-input">
+                        <div class="switch"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="settings-section">
+                <h2>Login Management</h2>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label for="autoFillLogins">Auto-fill Logins</label>
+                        <p>Automatically fill saved credentials on login pages</p>
+                    </div>
+                    <div class="switch-container">
+                        <input type="checkbox" id="autoFillLogins" class="switch-input">
+                        <div class="switch"></div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label for="syncCredentials">Sync Credentials</label>
+                        <p>Sync saved logins across devices (requires Chrome sync)</p>
+                    </div>
+                    <div class="switch-container">
+                        <input type="checkbox" id="syncCredentials" class="switch-input">
+                        <div class="switch"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="settings-section">
+                <h2>Notifications</h2>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label for="notifyBreaches">Breach Notifications</label>
+                        <p>Get notified when your email appears in data breaches</p>
+                    </div>
+                    <div class="switch-container">
+                        <input type="checkbox" id="notifyBreaches" class="switch-input">
+                        <div class="switch"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="settings-section">
+                <h2>API Configuration</h2>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label for="hibpApiKey">HaveIBeenPwned API Key</label>
+                        <p>Optional: Add your API key for enhanced breach checking</p>
+                    </div>
+                    <input type="password" id="hibpApiKey" placeholder="Enter your API key (optional)">
+                </div>
+            </section>
+
+            <div id="status" class="status-message"></div>
+        </main>
+
+        <footer class="footer">
+            <p>GhostVault v1.0 - Your privacy and security companion</p>
+        </footer>
+    </div>
+
+    <script src="settings.js"></script>
+</body>
+</html>

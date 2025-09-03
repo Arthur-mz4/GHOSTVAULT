@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .box { fill: #1e293b; }
+      .dot { fill: #60a5fa; }
+      .txt { fill: #94a3b8; font: 14px Inter, Arial, sans-serif; }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="320" height="320" rx="16"/>
+  <rect class="box" x="16" y="16" width="288" height="288" rx="8"/>
+  <rect class="dot" x="36" y="36" width="64" height="64" rx="8"/>
+  <rect class="bg" x="52" y="52" width="32" height="32" rx="6"/>
+  <rect class="dot" x="220" y="36" width="64" height="64" rx="8"/>
+  <rect class="bg" x="236" y="52" width="32" height="32" rx="6"/>
+  <rect class="dot" x="36" y="220" width="64" height="64" rx="8"/>
+  <rect class="bg" x="52" y="236" width="32" height="32" rx="6"/>
+  <g>
+    <rect class="dot" x="116" y="116" width="16" height="16"/>
+    <rect class="dot" x="148" y="116" width="16" height="16"/>
+    <rect class="dot" x="180" y="116" width="16" height="16"/>
+    <rect class="dot" x="212" y="116" width="16" height="16"/>
+    <rect class="dot" x="116" y="148" width="16" height="16"/>
+    <rect class="dot" x="148" y="148" width="16" height="16"/>
+    <rect class="dot" x="212" y="148" width="16" height="16"/>
+    <rect class="dot" x="116" y="180" width="16" height="16"/>
+    <rect class="dot" x="180" y="180" width="16" height="16"/>
+    <rect class="dot" x="212" y="180" width="16" height="16"/>
+    <rect class="dot" x="148" y="212" width="16" height="16"/>
+    <rect class="dot" x="180" y="212" width="16" height="16"/>
+  </g>
+  <text class="txt" x="24" y="308">Placeholder QR – replace with live Expo link</text>
+</svg>
+
+

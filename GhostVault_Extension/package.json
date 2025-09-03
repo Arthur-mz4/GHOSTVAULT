@@ -1,0 +1,28 @@
+{
+  "name": "ghostvault_extension",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "background.js",
+  "scripts": {
+    "test": "jest",
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "jest": "^30.0.5",
+    "rollup": "^4.46.3"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2"
+  }
+}

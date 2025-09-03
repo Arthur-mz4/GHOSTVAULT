@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to GhostVault</title>
+    <link rel="stylesheet" href="welcome.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <img src="icons/icon.png" alt="GhostVault" class="logo-icon">
+                <h1>Welcome to GhostVault</h1>
+            </div>
+        </header>
+
+        <main class="welcome-content">
+            <section class="hero-section">
+                <h2>Your Privacy & Security Companion</h2>
+                <p class="hero-text">
+                    GhostVault is your all-in-one solution for secure password management, 
+                    privacy protection, and breach detection. Keep your digital life safe and private.
+                </p>
+            </section>
+
+            <section class="features-section">
+                <h3>What GhostVault Does for You</h3>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔐</div>
+                        <h4>Secure Password Management</h4>
+                        <p>Store and manage your passwords with AES-GCM encryption. Your master password is never stored.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h4>Privacy Protection</h4>
+                        <p>Block trackers, analyze Terms & Conditions, and protect your browsing privacy.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h4>Breach Detection</h4>
+                        <p>Check if your email has been compromised in data breaches and get notified of new threats.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h4>Smart Auto-fill</h4>
+                        <p>Automatically fill your saved credentials on login pages for convenience.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="setup-section">
+                <h3>Quick Setup</h3>
+                
+                <div class="setup-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Set Your Master Password</h4>
+                            <p>This will be used to encrypt all your saved passwords. Choose a strong, memorable password.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Configure Privacy Settings</h4>
+                            <p>Choose which privacy features to enable, such as tracker blocking and breach notifications.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Start Using GhostVault</h4>
+                            <p>Begin saving passwords and protecting your privacy. GhostVault will learn your preferences over time.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="security-section">
+                <h3>Your Security Matters</h3>
+                <div class="security-info">
+                    <p><strong>🔒 Local Storage:</strong> All your data is stored locally on your device using IndexedDB.</p>
+                    <p><strong>🔐 Encryption:</strong> Passwords are encrypted with AES-GCM using your master password.</p>
+                    <p><strong>🌐 No Cloud Storage:</strong> Your data never leaves your device unless you choose to sync.</p>
+                    <p><strong>🔍 Open Source:</strong> Review the code to ensure transparency and security.</p>
+                </div>
+            </section>
+
+            <div class="action-buttons">
+                <button id="getStartedBtn" class="btn-primary">Get Started</button>
+                <button id="settingsBtn" class="btn-secondary">Open Settings</button>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>GhostVault v1.0 - Built with privacy and security in mind</p>
+        </footer>
+    </div>
+
+    <script src="welcome.js"></script>
+</body>
+</html>

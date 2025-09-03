@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GhostVault Settings</title>
+  <style>
+    :root {
+      /* GhostVault Design System - Dark Theme with Glassmorphism */
+      --bg: #0f1724; /* deep navy */
+      --panel: #111827; /* almost black */
+      --muted: #9aa4b2;
+      --surface: #0b1220;
+      --accent: #22c1c3; /* ghost teal */
+      --accent-2: #7dd3fc; /* light cyan for highlights */
+      --success: #28c76f;
+      --danger: #ff6b6b;
+      --glass: rgba(255, 255, 255, 0.03);
+      --radius: 12px;
+      --gap: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    /* Full page background */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, var(--bg), #071123);
+      color: #e6eef3;
+    }
+
+    /* Centered card container */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .settings-container {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      padding: 32px 28px;
+      max-width: 480px;
+      width: 90%;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(2, 6, 23, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      color: #e6eef3;
+    }
+
+    /* Header with logo */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+    
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #031018;
+      font-size: 16px;
+    }
+    
+    h1 {
+      text-align: center;
+      font-size: 24px;
+      margin: 0;
+      color: #e6eef3;
+      font-weight: 700;
+    }
+    
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    /* Settings item styling */
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .setting-item:last-child {
+      border-bottom: none;
+    }
+    
+    .setting-label {
+      font-size: 16px;
+      color: #e6eef3;
+      cursor: pointer;
+      user-select: none;
+      flex: 1;
+    }
+    
+    /* Custom toggle switch component */
+    .switch {
+      width: 44px;
+      height: 26px;
+      background: #031018;
+      border-radius: 20px;
+      padding: 3px;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .switch:hover {
+      border-color: rgba(34, 193, 195, 0.3);
+    }
+    
+    /* Animated knob inside switch */
+    .knob {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #e6eef3;
+      transform: translateX(0);
+      transition: transform 0.18s ease;
+    }
+    
+    /* Switch active state with gradient background */
+    .switch.on {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-color: var(--accent);
+    }
+    
+    /* Knob slides to the right when switch is on */
+    .switch.on .knob {
+      transform: translateX(18px);
+    }
+    
+    /* Hide default checkbox */
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    #status {
+      color: var(--success);
+      font-weight: 600;
+      font-size: 14px;
+      text-align: center;
+      min-height: 24px;
+      margin-top: 16px;
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(40, 199, 111, 0.1);
+      border: 1px solid rgba(40, 199, 111, 0.2);
+    }
+    
+    .setting-item:hover .setting-label {
+      color: var(--accent-2);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.015));
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    
+    .field label {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 0;
+    }
+    
+    .field input[type="text"], .field input[type="password"] {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: #e6eef3;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+    
+    .field input[type="text"]:focus, .field input[type="password"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: 0 0 0 2px rgba(34, 193, 195, 0.1);
+    }
+    
+    .field input::placeholder {
+      color: var(--muted);
+    }
+    
+    .field small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    
+    .field small a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    .field small a:hover {
+      text-decoration: underline;
+    }
+    /* Accessibility focus styles */
+    .switch:focus,
+    input:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-container">
+    <div class="header">
+      <div class="logo">GV</div>
+      <h1>GhostVault Settings</h1>
+    </div>
+    <div class="subtitle">Configure your privacy and security preferences</div>
+
+    <div class="setting-item" title="Block trackers on websites">
+      <label class="setting-label" for="blockTrackers">Enable Tracker Blocking</label>
+      <div class="switch" onclick="toggleSwitch('blockTrackers')">
+        <div class="knob"></div>
+      </div>
+      <input type="checkbox" id="blockTrackers" aria-label="Enable Tracker Blocking" />
+    </div>
+
+    <div class="setting-item" title="Show privacy and security tips in the popup">
+      <label class="setting-label" for="showTips">Show Tips on Popup</label>
+      <div class="switch" onclick="toggleSwitch('showTips')">
+        <div class="knob"></div>
+      </div>
+      <input type="checkbox" id="showTips" aria-label="Show Tips on Popup" />
+    </div>
+
+    <div class="setting-item" title="Autofill saved logins on supported sites">
+      <label class="setting-label" for="autoFillLogins">Enable Auto-fill Saved Logins</label>
+      <div class="switch" onclick="toggleSwitch('autoFillLogins')">
+        <div class="knob"></div>
+      </div>
+      <input type="checkbox" id="autoFillLogins" aria-label="Enable Auto-fill Saved Logins" />
+    </div>
+
+    <div class="setting-item" title="Notify you if a breach is detected for your accounts">
+      <label class="setting-label" for="notifyBreaches">Notify on Breach Detection</label>
+      <div class="switch" onclick="toggleSwitch('notifyBreaches')">
+        <div class="knob"></div>
+      </div>
+      <input type="checkbox" id="notifyBreaches" aria-label="Notify on Breach Detection" />
+    </div>
+
+    <div class="setting-item" title="Sync your credentials across devices using your browser account">
+      <label class="setting-label" for="syncCredentials">Sync Credentials Across Devices</label>
+      <div class="switch" onclick="toggleSwitch('syncCredentials')">
+        <div class="knob"></div>
+      </div>
+      <input type="checkbox" id="syncCredentials" aria-label="Sync Credentials Across Devices" />
+    </div>
+
+
+    <p id="status" aria-live="polite"></p>
+    
+    <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+      <a href="https://github.com/your-repo/ghostvault-extension#help" target="_blank" rel="noopener" style="color:var(--accent); text-decoration: none; font-size: 13px;" aria-label="Help and support">❓ Help & Support</a>
+    </div>
+  </div>
+  
+  <!-- Load JavaScript files at the end of body -->
+  <script src="settings.js"></script>
+</body>
+</html>

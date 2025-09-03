@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GhostVault – Members</title>
+    <link rel="icon" href="../../GhostVault_Extension/icons/icon.png" />
+    <link rel="stylesheet" href="../styles.css" />
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-wrap">
+        <a class="brand" href="../index.html">
+          <img class="logo" src="../../GhostVault_Extension/icons/icon.png" alt="GhostVault logo" />
+          <span class="brand-name">GhostVault</span>
+        </a>
+        <nav class="nav">
+          <a href="../index.html#features">Features</a>
+          <a href="../index.html#extension">Extension</a>
+          <a href="../index.html#mobile">Mobile</a>
+          <a href="../downloads/">Downloads</a>
+          <a id="nav-logout" href="#">Sign out</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container">
+          <h1 class="section-title">Welcome, Member</h1>
+          <p class="lead">You now have access to member‑only resources, updates, and downloads.</p>
+          <div class="features-grid" style="margin-top:16px;">
+            <article class="card">
+              <h3>Extension</h3>
+              <p>Install from the store or download a developer build.</p>
+              <div class="cta-row">
+                <a class="btn btn-primary" href="https://chrome.google.com/webstore/detail/ghostvault/placeholder" target="_blank" rel="noopener">Add to Chrome</a>
+                <a class="btn" href="https://microsoftedge.microsoft.com/addons/detail/ghostvault/placeholder" target="_blank" rel="noopener">Get for Edge</a>
+              </div>
+            </article>
+            <article class="card">
+              <h3>Mobile</h3>
+              <p>Use Expo Go to open the preview or get store links when available.</p>
+              <div class="cta-row">
+                <a class="btn" href="../mobile.html">Expo Preview</a>
+              </div>
+            </article>
+            <article class="card">
+              <h3>Downloads</h3>
+              <p>Access packaged builds and additional resources.</p>
+              <div class="cta-row">
+                <a class="btn" href="../downloads/">Open Downloads</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <div class="foot-left">
+          <a class="brand" href="../index.html">
+            <img class="logo" src="../../GhostVault_Extension/icons/icon.png" alt="GhostVault logo" />
+            <span class="brand-name">GhostVault</span>
+          </a>
+          <p class="tiny">© <span id="year"></span> GhostVault.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+      (function(){
+        if (!window.netlifyIdentity) return;
+        netlifyIdentity.on('init', user => { if (!user) window.location.href = '/login.html'; });
+        netlifyIdentity.init();
+        document.getElementById('nav-logout').addEventListener('click', function(e){ e.preventDefault(); netlifyIdentity.logout(); });
+        netlifyIdentity.on('logout', () => { window.location.href = '/'; });
+      })();
+    </script>
+  </body>
+  </html>
+
+

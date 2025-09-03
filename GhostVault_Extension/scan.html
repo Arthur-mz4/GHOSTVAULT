@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostVault Analyzer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        <img src="icons/icon.png" alt="GhostVault" class="logo-icon">
+        <h1>Privacy Analyzer</h1>
+      </div>
+    </header>
+
+    <div id="scanSection" class="section" style="display:block;">
+      <h3>Auto-detected T&C/Cookie Prompt</h3>
+      <div id="scanResult" class="tc-result">Analyzing Terms & Conditions and cookies...</div>
+      <div id="scanActions" class="tc-actions" style="display:none;">
+        <button id="scanAccept" class="btn-success">Accept</button>
+        <button id="scanReject" class="btn-danger">Reject</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="scan.js"></script>
+</body>
+</html>
+
+

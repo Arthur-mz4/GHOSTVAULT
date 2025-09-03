@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GhostVault</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <img src="icons/icon.png" alt="GhostVault" class="logo-icon">
+                <h1>GhostVault</h1>
+            </div>
+            <button id="settingsBtn" class="settings-btn" title="Settings">⚙️</button>
+        </header>
+
+        <!-- Security Tip -->
+        <div id="tip" class="tip">
+            💡 Use strong passwords to protect your accounts.
+        </div>
+
+        <!-- Main Features (Always Visible) -->
+        <div class="main-features">
+            <!-- Login Manager -->
+            <div id="loginManager" class="section">
+                <h3>Save New Login</h3>
+                <form id="loginForm" class="login-form">
+                    <input type="url" id="loginUrl" name="loginUrl" placeholder="Website URL" required>
+                    <input type="text" id="loginUser" name="loginUser" placeholder="Username/Email" required>
+                    <input type="password" id="loginPass" name="loginPass" placeholder="Password" required>
+                    <button type="submit" class="btn-primary">Save Login</button>
+                </form>
+
+                <h3>Saved Logins</h3>
+                <ul id="savedLogins" class="login-list"></ul>
+            </div>
+
+            <!-- T&C Analyzer -->
+            <div id="tcAnalyzer" class="section">
+                <h3>Terms & Conditions Analyzer</h3>
+                <button id="termsBtn" class="btn-secondary">Analyze Current Page</button>
+                
+                <div class="tc-input-section">
+                    <textarea id="tcInput" placeholder="Paste Terms & Conditions text here..."></textarea>
+                    <button id="analyzeTcBtn" class="btn-primary">Analyze Text</button>
+                </div>
+                
+                <div id="tcResult" class="tc-result"></div>
+                <div id="tcActions" class="tc-actions" style="display: none;"></div>
+            </div>
+
+            <!-- Breach Checker -->
+            <div class="section">
+                <h3>Breach Checker</h3>
+                <div class="breach-checker">
+                    <input type="email" id="emailInput" placeholder="Enter email address">
+                    <button id="breachBtn" class="btn-primary">Check for Breaches</button>
+                </div>
+                <div id="breachResult" class="breach-result"></div>
+            </div>
+        </div>
+
+        <!-- Main Navigation Tabs -->
+        <nav class="tabs">
+            <button id="tabLogins" class="tab active">Logins</button>
+            <button id="tabScans" class="tab">Scans</button>
+            <button id="tabNever" class="tab">Never Save</button>
+            <button id="tabExport" class="tab">Export</button>
+        </nav>
+
+        <!-- Tab Content (Data Tables Only) -->
+        <div id="tabContent" class="tab-content">
+            <!-- Tab-specific content will be loaded here -->
+        </div>
+    </div>
+
+    <script src="db.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>

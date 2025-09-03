@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GhostVault Browser Extension – Guide</title>
+    <meta name="description" content="How to install and use the GhostVault browser extension: secure password manager, breach detection, tracker blocking, and privacy analysis." />
+    <link rel="icon" href="../GhostVault_Extension/icons/icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-wrap">
+        <a class="brand" href="index.html">
+          <img class="logo" src="../GhostVault_Extension/icons/icon.png" alt="GhostVault logo" />
+          <span class="brand-name">GhostVault</span>
+        </a>
+        <nav class="nav">
+          <a href="index.html#features">Features</a>
+          <a href="#install">Install</a>
+          <a href="#usage">Usage</a>
+          <a href="#security">Security</a>
+          <a href="#troubleshooting">Troubleshooting</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="container">
+          <h1 class="section-title">GhostVault Browser Extension</h1>
+          <p class="lead">A privacy‑first browser extension that protects your accounts and your data with encrypted password management, breach detection, tracker blocking, and privacy analysis.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="https://chrome.google.com/webstore/detail/ghostvault/placeholder" target="_blank" rel="noopener">Add to Chrome</a>
+            <a class="btn" href="https://microsoftedge.microsoft.com/addons/detail/ghostvault/placeholder" target="_blank" rel="noopener">Get for Edge</a>
+            <a class="btn" href="index.html#extension">Back to overview</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="section alt">
+        <div class="container">
+          <h2 class="section-title">Key features</h2>
+          <div class="features-grid">
+            <article class="card"><h3>Secure Passwords</h3><p>AES‑GCM encryption, PBKDF2 key derivation, master password never stored.</p></article>
+            <article class="card"><h3>Breach Detection</h3><p>Checks emails/passwords via HaveIBeenPwned (optional API key).</p></article>
+            <article class="card"><h3>Tracker Blocking</h3><p>Blocks common analytics/ads with MV3 declarative net request rules.</p></article>
+            <article class="card"><h3>T&amp;C & Cookies</h3><p>Analyzes terms and cookie dialogs for privacy risks.</p></article>
+            <article class="card"><h3>Phishing Checks</h3><p>Flags suspicious sites and patterns.</p></article>
+            <article class="card"><h3>Modern UI</h3><p>Clean, accessible dark mode interface.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="install" class="section">
+        <div class="container cols">
+          <div>
+            <h2 class="section-title">One‑click install</h2>
+            <p>GhostVault will be listed on the Chrome Web Store and Edge Add‑ons. Use the buttons above for easy installation.</p>
+            <h3 style="margin-top:16px;">Developer Mode (optional)</h3>
+            <ol class="steps">
+              <li>Open <code>chrome://extensions</code> (Chrome) or <code>edge://extensions</code> (Edge).</li>
+              <li>Enable “Developer mode”.</li>
+              <li>Click “Load unpacked” and select the <code>GhostVault_Extension</code> folder.</li>
+              <li>Pin GhostVault and click the icon to open the popup.</li>
+            </ol>
+            <p class="hint">Later, you can package for the Chrome Web Store. For now, dev mode is perfect for testing.</p>
+          </div>
+          <div class="panel">
+            <h3>Quick Start</h3>
+            <ul class="checklist">
+              <li>Open the popup and set your master password.</li>
+              <li>Visit a login page, sign in, and save credentials when prompted.</li>
+              <li>Use the Breach Checker to test an email with HIBP.</li>
+              <li>Toggle tracker blocking and other settings in the options page.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="usage" class="section alt">
+        <div class="container cols">
+          <div>
+            <h2 class="section-title">Using GhostVault</h2>
+            <h3>Saving passwords</h3>
+            <p>When you submit a login form, GhostVault detects it and offers to save your credentials securely. Your data is encrypted with AES‑GCM; the master password is never stored.</p>
+            <h3>Auto‑fill</h3>
+            <p>On supported pages, previously saved logins can be auto‑filled from the popup.</p>
+            <h3>Breach checks</h3>
+            <p>Enable HaveIBeenPwned checks by adding your API key in settings, then check an email for known breaches directly from the popup.</p>
+            <h3>T&amp;C and cookies</h3>
+            <p>On pages with privacy dialogs, GhostVault analyzes language and highlights potential privacy‑unfriendly patterns before you accept.</p>
+          </div>
+          <div class="panel">
+            <h3>Settings</h3>
+            <ul class="checklist">
+              <li>Tracker blocking</li>
+              <li>Auto‑fill</li>
+              <li>Breach notifications</li>
+              <li>Dark mode</li>
+              <li>Sync (optional)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="security" class="section">
+        <div class="container">
+          <h2 class="section-title">Security architecture</h2>
+          <div class="trust-grid">
+            <article class="card"><h3>Encryption</h3><p>AES‑GCM with 256‑bit keys, PBKDF2 (100k iterations), random salt & IV per encryption.</p></article>
+            <article class="card"><h3>Local‑first</h3><p>Data stored in IndexedDB; master password only in memory while needed.</p></article>
+            <article class="card"><h3>Privacy</h3><p>No tracking or analytics. External calls only for breach checks you initiate.</p></article>
+            <article class="card"><h3>Transparency</h3><p>Readable code, clear error handling, and explicit permissions.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="troubleshooting" class="section alt">
+        <div class="container cols">
+          <div>
+            <h2 class="section-title">Troubleshooting</h2>
+            <h3>Extension not loading</h3>
+            <ul class="checklist">
+              <li>Developer mode is enabled.</li>
+              <li>All files are present in the folder.</li>
+              <li>Reload the extension and check the console for errors.</li>
+            </ul>
+            <h3>Login detection doesn’t trigger</h3>
+            <ul class="checklist">
+              <li>Give the extension access to the current site.</li>
+              <li>Ensure the page uses standard HTML form elements.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Security tips</h3>
+            <ul class="checklist">
+              <li>Use a strong, unique master password.</li>
+              <li>Regularly check for breaches.</li>
+              <li>Keep your browser up to date.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section cta-final">
+        <div class="container center">
+          <h2>Ready to try GhostVault?</h2>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="#install">Install Now</a>
+            <a class="btn" href="index.html">Back to Home</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <div class="foot-left">
+          <a class="brand" href="index.html">
+            <img class="logo" src="../GhostVault_Extension/icons/icon.png" alt="GhostVault logo" />
+            <span class="brand-name">GhostVault</span>
+          </a>
+          <p class="tiny">© <span id="year"></span> GhostVault.</p>
+        </div>
+        <div class="foot-nav">
+          <a href="#install">Install</a>
+          <a href="#usage">Usage</a>
+          <a href="#security">Security</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  </body>
+  </html>
+
+
