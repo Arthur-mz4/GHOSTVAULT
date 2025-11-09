@@ -1,41 +1,172 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useSettings } from '../../App';
-import { scanUrl } from '../services/scanService';
+import { useTheme } from '../contexts/ThemeContext';
+import { simplifiedApiScan } from '../services/simplifiedApiService';
+import { saveScanRecord } from '../services/historyService';
 
 export default function LinkScannerScreen() {
   const { settings } = useSettings();
+  const { theme } = useTheme();
   const [url, setUrl] = useState('');
   const [out, setOut] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const validateUrl = (url) => {
+    // Basic URL validation
+    const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})[\/\w .-]*\/?$/i;
+    if (!urlPattern.test(url)) {
+      return 'Please enter a valid URL';
+    }
+    return null;
+  };
 
   const onScan = async () => {
-    setOut({ loading: true });
-    try { const result = await scanUrl(url.trim(), settings); setOut(result); }
-    catch (e) { setOut({ safe: false, reason: e?.message || 'Scan failed' }); }
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl) {
+      setOut({ safe: false, reason: 'Please enter a URL' });
+      return;
+    }
+
+    // Validate URL format
+    const validationError = validateUrl(trimmedUrl);
+    if (validationError) {
+      setOut({ safe: false, reason: validationError });
+      return;
+    }
+
+    // Dismiss keyboard when scanning starts
+    Keyboard.dismiss();
+    
+    setLoading(true);
+    setOut(null);
+    
+    try {
+      const result = await simplifiedApiScan(trimmedUrl, settings);
+      setOut(result);
+      
+      // Save to history
+      await saveScanRecord({
+        type: 'Link Scan',
+        item: trimmedUrl,
+        date: Date.now(),
+        result: result.safe ? 'Safe' : 'Unsafe',
+        details: result.sources || result.reason
+      });
+    } catch (e) {
+      const errorResult = { safe: false, reason: e?.message || 'Scan failed', error: true };
+      setOut(errorResult);
+      
+      await saveScanRecord({
+        type: 'Link Scan',
+        item: trimmedUrl,
+        date: Date.now(),
+        result: 'Error',
+        details: errorResult.reason
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Scan a Link</Text>
-      <TextInput value={url} onChangeText={setUrl} placeholder="https://example.com" placeholderTextColor="#94a3b8" style={styles.input} />
-      <Button title="Scan" onPress={onScan} />
-      {out && (
-        <View style={styles.card}>
-          <Text style={{ color: out.safe ? '#22c55e' : '#f59e0b', fontWeight: '600' }}>{out.safe ? 'Safe' : 'Potential Risk'}</Text>
-          {out.reason ? <Text style={styles.reason}>{out.reason}</Text> : null}
-          {out.details ? <Text style={styles.details}>{out.details}</Text> : null}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
+        <Text style={[styles.title, { color: theme.text }]}>🔗 Link Scanner</Text>
+        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Test URLs for security threats</Text>
+      
+      <TextInput 
+        value={url} 
+        onChangeText={setUrl} 
+        placeholder="https://example.com or paste any URL" 
+        placeholderTextColor={theme.textSecondary} 
+        style={[styles.input, { backgroundColor: theme.surface, color: theme.text, borderColor: theme.border }]} 
+      />
+      
+      <TouchableOpacity 
+        style={[styles.scanButton, { backgroundColor: theme.primary }]} 
+        onPress={onScan}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#ffffff" />
+        ) : (
+          <Text style={styles.scanButtonText}>🔍 Scan Now</Text>
+        )}
+      </TouchableOpacity>
+
+      {loading && (
+        <View style={[styles.loadingCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+          <ActivityIndicator color={theme.primary} size="large" />
+          <Text style={[styles.loadingText, { color: theme.text }]}>Scanning with multiple engines...</Text>
+        </View>
+      )}
+
+      {out && !loading && (
+        <View style={[styles.resultCard, { backgroundColor: theme.surface, borderColor: out.safe ? theme.success : theme.danger }]}>
+          <View style={styles.resultHeader}>
+            <Text style={styles.resultIcon}>{out.safe ? '✅' : '⚠️'}</Text>
+            <Text style={[styles.resultStatus, { color: out.safe ? theme.success : theme.danger }]}>
+              {out.safe ? 'SAFE' : out.error ? 'ERROR' : 'THREAT DETECTED'}
+            </Text>
+          </View>
+          
+          <Text style={[styles.reason, { color: theme.text }]}>{out.reason}</Text>
+          
+          {out.sources && (
+            <View style={[styles.sourcesCard, { backgroundColor: theme.background }]}>
+              <Text style={[styles.sourcesLabel, { color: theme.textSecondary }]}>Scanned by:</Text>
+              <Text style={[styles.sources, { color: theme.primary }]}>{out.sources}</Text>
+            </View>
+          )}
+          
+          {out.cached && (
+            <Text style={[styles.cached, { color: theme.textSecondary }]}>⚡ Result from cache (scanned recently)</Text>
+          )}
+
+          {out.details && out.details.length > 0 && (
+            <View style={styles.detailsSection}>
+              <Text style={[styles.detailsTitle, { color: theme.text }]}>Detailed Results:</Text>
+              {out.details.map((detail, index) => (
+                <View key={index} style={[styles.detailCard, { backgroundColor: theme.background }]}>
+                  <Text style={[styles.detailSource, { color: theme.primary }]}>{detail.source}</Text>
+                  <Text style={[styles.detailReason, { color: detail.safe ? theme.success : theme.danger }]}>
+                    {detail.safe ? '✓' : '✗'} {detail.reason}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
       )}
     </View>
+    </TouchableWithoutFeedback>
   );
 }
+
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#0b1220', gap: 12 },
-  title: { color: '#e6eef3', fontSize: 18, fontWeight: '600' },
-  input: { backgroundColor: '#0f172a', color: '#e6eef3', borderColor: '#334155', borderWidth: 1, padding: 10, borderRadius: 8 },
-  card: { marginTop: 12, padding: 12, backgroundColor: '#0f172a', borderWidth: 1, borderColor: '#334155', borderRadius: 8 },
-  reason: { color: '#e6eef3', marginTop: 4 },
-  details: { color: '#94a3b8', marginTop: 4 }
+  container: { flex: 1, padding: 16 },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 8 },
+  subtitle: { fontSize: 14, marginBottom: 20 },
+  input: { borderWidth: 1, padding: 12, borderRadius: 8, fontSize: 15 },
+  scanButton: { borderRadius: 8, padding: 14, alignItems: 'center', marginTop: 16 },
+  scanButtonText: { color: '#ffffff', fontSize: 16, fontWeight: 'bold' },
+  loadingCard: { marginTop: 20, padding: 20, borderWidth: 1, borderRadius: 12, alignItems: 'center' },
+  loadingText: { marginTop: 12, fontSize: 14 },
+  resultCard: { marginTop: 20, padding: 16, borderWidth: 2, borderRadius: 12 },
+  resultHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  resultIcon: { fontSize: 32, marginRight: 12 },
+  resultStatus: { fontSize: 20, fontWeight: 'bold' },
+  reason: { fontSize: 15, marginBottom: 12, lineHeight: 22 },
+  sourcesCard: { padding: 12, borderRadius: 8, marginBottom: 8 },
+  sourcesLabel: { fontSize: 12, marginBottom: 4 },
+  sources: { fontSize: 13, fontWeight: '600' },
+  cached: { fontSize: 12, fontStyle: 'italic', marginTop: 8 },
+  detailsSection: { marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: '#334155' },
+  detailsTitle: { fontSize: 16, fontWeight: '600', marginBottom: 12 },
+  detailCard: { padding: 10, borderRadius: 6, marginBottom: 8 },
+  detailSource: { fontSize: 13, fontWeight: 'bold', marginBottom: 4 },
+  detailReason: { fontSize: 13 }
 });
 
 

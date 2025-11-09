@@ -5,11 +5,45 @@
     "version": "1.0.0",
     "scheme": "ghostguard",
     "orientation": "portrait",
-    "userInterfaceStyle": "automatic",
-    "platforms": ["ios", "android"],
-    "ios": { "supportsTablet": true },
-    "android": { "package": "com.ghostguard.mobile" }
+    "userInterfaceStyle": "dark",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0b1220"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ghostguard.mobile"
+    },
+    "android": {
+      "package": "com.ghostguard.mobile",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0b1220"
+      },
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-web-browser"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d05e411a-f7a7-4324-9b7c-6c2c0d036377"
+      }
+    }
   }
 }
-
-
